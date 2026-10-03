@@ -1,157 +1,60 @@
-# DeepFER — Facial Emotion Recognition Using Deep Learning
+# DeepFER: Facial Emotion Recognition Using Deep Learning
 
-DeepFER is an end-to-end facial-expression classification project for seven expression categories:
+## Project Overview
+DeepFER is a seven-class facial emotion recognition system using deep learning.
+The project uses image augmentation, class weighting, a custom CNN baseline,
+and transfer learning with MobileNetV2. It also includes evaluation metrics,
+confusion matrices, training curves, model saving, single-image prediction,
+and a real-time webcam application.
 
-`angry, disgust, fear, happy, neutral, sad, surprise`
+## Dataset
+The supplied dataset contains:
+- 35,887 JPEG images
+- Training: 28,821
+- Validation: 7,066
+- Classes: angry, disgust, fear, happy, neutral, sad, surprise
 
-It includes:
-- Dataset loading from directory structure
-- Data augmentation
-- Custom CNN training
-- Transfer learning with MobileNetV2
-- Evaluation with accuracy, precision, recall, F1-score and confusion matrix
-- Single-image prediction
-- Real-time webcam detection with OpenCV
-- Streamlit web interface
+Training class counts:
+- angry: 3,993
+- disgust: 436
+- fear: 4,103
+- happy: 7,164
+- neutral: 4,982
+- sad: 4,938
+- surprise: 3,205
 
-> Important: the model classifies visible facial-expression categories. It should not be treated as a definitive measurement of a person's internal emotional or mental state.
+Validation class counts:
+- angry: 960
+- disgust: 111
+- fear: 1,018
+- happy: 1,825
+- neutral: 1,216
+- sad: 1,139
+- surprise: 797
 
-## 1. Environment
+There is no separate test directory in the supplied ZIP. The notebook therefore
+uses the supplied validation directory for validation/evaluation and explicitly
+documents this limitation. For a publication-quality result, a held-out test
+set should be created before final training.
 
-Python 3.10–3.12 is recommended.
+## Models
+1. Custom CNN baseline
+2. MobileNetV2 transfer-learning model
+3. Optional fine-tuning of the last layers of MobileNetV2
 
-Create an environment:
+## Evaluation
+Accuracy, precision, recall, F1-score, confusion matrix, per-class performance,
+and training/validation curves are generated.
 
-```bash
-python -m venv .venv
-```
+## Real-Time Demo
+`app.py` uses OpenCV Haar-cascade face detection and the trained Keras model.
+It displays the predicted emotion and confidence for detected faces.
 
-Windows:
-```bash
-.venv\\Scripts\\activate
-```
+## Colab
+Upload the supplied ZIP to Google Colab, run the notebook cells in order, and
+set DATASET_ZIP to the uploaded ZIP path.
 
-Linux/macOS:
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-## 2. Dataset
-
-Place your dataset in:
-
-```text
-dataset/
-├── train/
-│   ├── angry/
-│   ├── disgust/
-│   ├── fear/
-│   ├── happy/
-│   ├── neutral/
-│   ├── sad/
-│   └── surprise/
-├── validation/
-│   └── same seven folders
-└── test/
-    └── same seven folders
-```
-
-The loader also accepts `val` instead of `validation` when using the command-line scripts.
-
-Recommended public datasets include FER-style datasets with the same seven categories. Make sure your dataset license permits your intended use.
-
-## 3. Train the custom CNN
-
-```bash
-python -m src.train_cnn
-```
-
-Optional:
-
-```bash
-python -m src.train_cnn --epochs 30 --batch-size 64
-```
-
-The model is saved as:
-
-```text
-models/deepfer_cnn.keras
-```
-
-## 4. Train MobileNetV2 transfer-learning model
-
-```bash
-python -m src.train_transfer
-```
-
-The model is saved as:
-
-```text
-models/deepfer_mobilenetv2.keras
-```
-
-## 5. Evaluate a model
-
-```bash
-python -m src.evaluate --model models/deepfer_mobilenetv2.keras --split test
-```
-
-Outputs are placed in `results/`.
-
-## 6. Predict an image
-
-```bash
-python -m src.predict path/to/face.jpg
-```
-
-Or specify a model:
-
-```bash
-python -m src.predict path/to/face.jpg --model models/deepfer_mobilenetv2.keras
-```
-
-## 7. Real-time webcam
-
-```bash
-python -m src.realtime --model models/deepfer_mobilenetv2.keras
-```
-
-Press `q` to quit.
-
-## 8. Streamlit application
-
-```bash
-streamlit run app/app.py
-```
-
-The application supports image upload and webcam input where supported by the Streamlit installation.
-
-## Project workflow
-
-```text
-Image / Video
-     ↓
-Face Detection
-     ↓
-Face Crop
-     ↓
-Resize + Normalization
-     ↓
-CNN / MobileNetV2
-     ↓
-7-class Softmax
-     ↓
-Expression + Confidence
-```
-
-## Notes
-
-- Training requires a dataset; this package intentionally does not redistribute third-party image datasets.
-- If the dataset is small, transfer learning is generally useful, but performance depends strongly on dataset quality, class balance, subject diversity and evaluation methodology.
-- For a fair academic comparison, keep the test set fixed and do not tune hyperparameters against it.
+## Important Interpretation Note
+Facial-expression classifiers predict a dataset label from visual patterns.
+They should not be treated as reliable measurements of a person's internal
+mental state, mental health, intent, or personality.
