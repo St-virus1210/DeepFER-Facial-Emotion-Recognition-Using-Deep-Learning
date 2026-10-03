@@ -1,0 +1,6 @@
+DeepFER Project
+Generated project scaffold.
+
+This project code is provided for educational and research use.
+Third-party datasets and pretrained model weights may have separate licenses.
+Check their terms before redistribution or commercial deployment.
